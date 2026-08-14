@@ -21,9 +21,17 @@ fi
 echo "Found $CUSTOM_LUA"
 read -p "Add the keybind automatically? [y/N] " confirm
 if [[ "$confirm" =~ ^[Yy]$ ]]; then
-    cp "$CUSTOM_LUA" "$CUSTOM_LUA.bak"
-    echo "$BIND_LINE" >> "$CUSTOM_LUA"
-    echo "Added. Backup saved as custom.lua.bak"
+    if grep -q "ocr-clipboard.sh" "$CUSTOM_LUA"; then
+        echo "Keybind already present, skipping."
+    else
+        cp "$CUSTOM_LUA" "$CUSTOM_LUA.bak"
+        echo "$BIND_LINE" >> "$CUSTOM_LUA"
+        echo "Added. Backup saved as custom.lua.bak"
+        if command -v hyprctl &> /dev/null; then
+            hyprctl reload
+            echo "Hyprland config reloaded — keybind should be live now."
+        fi
+    fi
 else
     echo "Skipped. Add this line yourself:"
     echo "$BIND_LINE"
