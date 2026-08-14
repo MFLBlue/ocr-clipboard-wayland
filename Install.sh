@@ -12,18 +12,19 @@ BIND_LINE='hl.bind("SUPER + O", hl.dsp.exec_cmd("'"$SCRIPT_PATH"'"), { descripti
 CUSTOM_LUA="$HOME/.config/hypr/custom.lua"
 
 echo ""
-if [ -f "$CUSTOM_LUA" ]; then
-    echo "Found $CUSTOM_LUA"
-    read -p "Add the keybind automatically? [y/N] " confirm
-    if [[ "$confirm" =~ ^[Yy]$ ]]; then
-        cp "$CUSTOM_LUA" "$CUSTOM_LUA.bak"
-        echo "$BIND_LINE" >> "$CUSTOM_LUA"
-        echo "Added. Backup saved as custom.lua.bak"
-    else
-        echo "Skipped. Add this line yourself:"
-        echo "$BIND_LINE"
-    fi
+if [ ! -f "$CUSTOM_LUA" ]; then
+    echo "custom.lua not found — creating it."
+    mkdir -p "$(dirname "$CUSTOM_LUA")"
+    touch "$CUSTOM_LUA"
+fi
+
+echo "Found $CUSTOM_LUA"
+read -p "Add the keybind automatically? [y/N] " confirm
+if [[ "$confirm" =~ ^[Yy]$ ]]; then
+    cp "$CUSTOM_LUA" "$CUSTOM_LUA.bak"
+    echo "$BIND_LINE" >> "$CUSTOM_LUA"
+    echo "Added. Backup saved as custom.lua.bak"
 else
-    echo "No custom.lua found. Add this line to your compositor's config:"
+    echo "Skipped. Add this line yourself:"
     echo "$BIND_LINE"
 fi
